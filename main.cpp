@@ -56,6 +56,65 @@ int img_check_symmetry(img_t img)
     return counter;
 }
 
+bool img_is_neighbor(int x, int y, int nx, int ny)
+{
+    for (int y0 = y - 1; y0 <= y + 1; ++y0) {
+        for (int x0 = x - 1; x0 <= x + 1; ++x0) {
+            if (y0 == y && x0 == x) {
+                continue;
+            }
+
+            if ((x0 < 0 || x0 >= WIDTH) || (y0 < 0 || y0 >= HEIGHT)) {
+                continue;
+            }
+
+            if (x0 == nx && y0 == ny) {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
+bool img_is_contrasting(img_t img, int x, int y, int nx, int ny)
+{
+    return abs(img[y][x] - img[ny][nx]) >= 128;
+}
+
+int img_get_contrasting_px(img_t img)
+{
+    int nb = 0;
+    int counter = 0;
+
+    for (int y = 0; y < HEIGHT; ++y) {
+        for (int x = 0; x < WIDTH; ++x) {
+            if (img_is_neighbor(x, y, x, y - 1) && img_is_contrasting(img, x, y, x, y- 1)) {
+                nb = 1;
+            }
+
+            if (img_is_neighbor(x, y, x, y + 1) && img_is_contrasting(img, x, y, x, y + 1)) {
+                nb = 1;
+            }
+
+            if (img_is_neighbor(x, y, x - 1, y) && img_is_contrasting(img, x, y, x - 1, y)) {
+                nb = 1;
+            }
+
+            if (img_is_neighbor(x, y, x + 1, y) && img_is_contrasting(img, x, y, x + 1, y)) {
+                nb = 1;
+            }
+
+            if (nb) {
+                ++counter;
+                nb = 0;
+            }
+        }
+    }
+
+    return counter;
+}
+
 static img_t image;
 
 int main(void)
@@ -68,6 +127,8 @@ int main(void)
     printf("%hhu %hhu\n", brightest, darkest);
 
     printf("%d\n", img_check_symmetry(image));
+
+    printf("%d\n", img_get_contrasting_px(image));
 
     return 0;
 }
