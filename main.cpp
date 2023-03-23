@@ -40,6 +40,22 @@ void img_get_brightest_and_darkest_px(img_t img, uint8_t *bright, uint8_t *dark)
     *dark = darkest;
 }
 
+int img_check_symmetry(img_t img)
+{
+    int counter = 0;
+
+    for (int y = 0; y < HEIGHT; ++y) {
+        for (int x = 0; x < WIDTH; ++x) {
+            if (img[y][x] != img[y][WIDTH-x-1]) {
+                ++counter;
+                break;
+            }
+        }
+    }
+
+    return counter;
+}
+
 static img_t image;
 
 int main(void)
@@ -50,6 +66,8 @@ int main(void)
     img_get_brightest_and_darkest_px(image, &brightest, &darkest);
 
     printf("%hhu %hhu\n", brightest, darkest);
+
+    printf("%d\n", img_check_symmetry(image));
 
     return 0;
 }
