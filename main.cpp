@@ -115,6 +115,25 @@ int img_get_contrasting_px(img_t img)
     return counter;
 }
 
+int img_get_longest_line(img_t img)
+{
+    int longest = 1;
+    int temp = 1;
+
+    for (int x = 0; x < WIDTH; ++x) {
+        for (int y = 1; y < HEIGHT; ++y) {
+            if (img[y][x] == img[y-1][x]) {
+                temp++;
+            } else {
+                longest = (temp > longest) ? temp : longest;
+                temp = 1;
+            }
+        }
+    }
+
+    return longest;
+}
+
 static img_t image;
 
 int main(void)
@@ -129,6 +148,8 @@ int main(void)
     printf("%d\n", img_check_symmetry(image));
 
     printf("%d\n", img_get_contrasting_px(image));
+
+    printf("%d\n", img_get_longest_line(image));
 
     return 0;
 }
